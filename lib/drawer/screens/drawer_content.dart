@@ -1,21 +1,20 @@
 // drawer_content.dart
 import 'package:flutter/material.dart';
+import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model.dart';
+import 'package:swiftfeed/drawer/user_account/user_info.dart';
 
 class DrawerContent extends StatelessWidget {
-  const DrawerContent({super.key});
+  final AnonUserModel user; // Add user parameter
+
+  const DrawerContent({Key? key, required this.user}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         children: [
-          const UserAccountsDrawerHeader(
-            accountEmail: Text('godwinsallah16@gmail.com'),
-            accountName: Text('godwinsallah'),
-            currentAccountPicture: CircleAvatar(
-              foregroundImage: AssetImage('assets/images/swift_logo.png'),
-            ),
-            otherAccountsPictures: [],
-          ),
+          UserInfo(
+              user: user), // Display user information using UserInfo widget
           ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),

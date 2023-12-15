@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services" // Add the Google services Gradle plugin
 }
 
 def localProperties = new Properties()
@@ -25,7 +26,7 @@ if (flutterVersionName == null) {
 android {
     namespace "com.swiftfeed.swiftfeed"
     compileSdkVersion flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    ndkVersion "25.2.9519653" // Add the NDK version here
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -41,20 +42,16 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.swiftfeed.swiftfeed"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
     }
@@ -64,4 +61,8 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation platform("com.google.firebase:firebase-bom:32.7.0")
+    implementation "com.google.firebase:firebase-analytics"
+    // Add other Firebase dependencies as needed
+}

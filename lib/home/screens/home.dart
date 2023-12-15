@@ -1,22 +1,17 @@
 // home.dart
 import 'package:flutter/material.dart';
-import 'package:swiftfeed/drawer_content.dart';
 import 'package:swiftfeed/news/news_template/home_template.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final dynamic user; // Change the type to dynamic
+
+  const Home({super.key, this.user});
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  int count = 1;
-  bool isSelectedHome = false;
-  bool isSelectedAdd = false;
-  bool isSelectedBookmark = false;
-  bool isSelectedSettings = false;
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,8 +23,16 @@ class _HomeState extends State<Home> {
           ),
           backgroundColor: Colors.grey[800],
           elevation: 0,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                // Open the drawer when the menu icon is tapped
+                Scaffold.of(context).openDrawer();
+              },
+            ),
+          ],
         ),
-        drawer: const DrawerContent(),
         body: SafeArea(
           child: NewsScreen(
             newsList: [

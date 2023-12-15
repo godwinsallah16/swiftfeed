@@ -75,7 +75,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 Navigator.pushReplacementNamed(context, '/home');
               }
             },
-            child: Text('Sign Up'),
+            child: const Text('Sign Up'),
           ),
         ],
       ),
