@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "598522706420",
+    "project_id": "swift-feed",
+    "storage_bucket": "swift-feed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598522706420:android:232bc039c5023fc4ee21a1",
+        "android_client_info": {
+          "package_name": "com.swiftfeed.swiftfeed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "598522706420-94as2hmvimste61ci1hfo3dl7451n0cq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJQNpG3wH0r4L4zjUoixQa0-FXBlcF10E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "598522706420-94as2hmvimste61ci1hfo3dl7451n0cq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "598522706420-fu4lsso3h44fkjd61ki9nvdvqr4ogqi5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.swiftfeed.swiftfeed"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
