@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class NewsScreen extends StatelessWidget {
   final List<News> newsList;
 
-  const NewsScreen({Key? key, required this.newsList}) : super(key: key);
+  const NewsScreen({super.key, required this.newsList});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class NewsScreen extends StatelessWidget {
 class NewsItem extends StatelessWidget {
   final News news;
 
-  const NewsItem({Key? key, required this.news}) : super(key: key);
+  const NewsItem({super.key, required this.news});
 
   @override
   Widget build(BuildContext context) {
