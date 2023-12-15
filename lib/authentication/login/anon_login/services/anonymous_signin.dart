@@ -1,22 +1,15 @@
-// anonymous_signin.dart
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model.dart';
 
-class SignInAnonymous {
+class AnonymousSignin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<AnonUserModel?> signInAnonymously() async {
+  Future<User?> signInAnon() async {
     try {
-      UserCredential userCredential = await _auth.signInAnonymously();
-      User? user = userCredential.user;
-
-      if (user != null) {
-        return AnonUserModel(userId: user.uid, isAnonymous: user.isAnonymous);
-      }
+      UserCredential result = await _auth.signInAnonymously();
+      return result.user;
     } catch (e) {
-      print('Error signing in anonymously: $e');
+      print(e.toString());
+      return null;
     }
-
-    return null;
   }
 }
