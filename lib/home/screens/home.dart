@@ -28,12 +28,6 @@ class _HomeState extends State<Home> {
           ),
           backgroundColor: Colors.grey[800],
           elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.settings, color: Colors.white),
-              onPressed: () {},
-            ),
-          ],
         ),
         drawer: const DrawerContent(),
         body: SafeArea(

@@ -1,5 +1,10 @@
 // main.dart
 import 'package:flutter/material.dart';
+import 'package:swiftfeed/base_screen.dart';
+import 'package:swiftfeed/home/screens/home.dart';
+import 'package:swiftfeed/news/add_news/screens/add_news.dart';
+import 'package:swiftfeed/news/bookmark/screens/bookmark.dart';
+import 'package:swiftfeed/settings/screens/settings.dart';
 import 'package:swiftfeed/splash.dart';
 
 void main() {
@@ -11,9 +16,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'SwiftFeed',
-      home: Splash(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const Splash(),
+        '/main': (context) => MainScreen(),
+        '/home': (context) => const Home(),
+        '/add': (context) => const AddNewsScreen(),
+        '/bookmark': (context) => const BookmarkScreen(),
+        '/settings': (context) => const SettingsScreen(),
+      },
     );
   }
 }

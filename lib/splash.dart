@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:swiftfeed/base_screen.dart';
+import 'package:swiftfeed/authentication/login/screens/login_screen.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -19,7 +19,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     Future.delayed(const Duration(seconds: 10), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => MainScreen(),
+          builder: (_) => const LoginScreen(),
         ),
       );
     });
