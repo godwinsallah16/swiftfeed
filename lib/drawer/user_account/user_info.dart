@@ -5,7 +5,7 @@ import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model
 class UserInfo extends StatelessWidget {
   final AnonUserModel? user; // Make user parameter nullable
 
-  const UserInfo({Key? key, this.user}) : super(key: key);
+  const UserInfo({super.key, this.user});
 
   @override
   Widget build(BuildContext context) {

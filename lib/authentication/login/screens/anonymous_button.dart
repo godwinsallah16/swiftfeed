@@ -65,16 +65,20 @@ class _AnonymousButtonState extends State<AnonymousButton> {
   }
 
   void _handleSignInSuccess(User firebaseUser) {
-    AnonUserModel user = AnonUserModel(
-      userId: firebaseUser.uid,
-      isAnonymous: firebaseUser.isAnonymous,
-      email: '', // Anonymous users don't have an email
-    );
+    if (mounted) {
+      AnonUserModel user = AnonUserModel(
+        userId: firebaseUser.uid,
+        isAnonymous: firebaseUser.isAnonymous,
+        email: '', // Anonymous users don't have an email
+      );
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => MainScreen(user: user)),
-    );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainScreen(anonUser: user),
+        ),
+      );
+    }
   }
 
   void _handleSignInError() {

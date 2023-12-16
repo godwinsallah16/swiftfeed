@@ -1,38 +1,45 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
 import 'package:swiftfeed/authentication/login/anon_login/services/anon_user_converter.dart';
 import 'package:swiftfeed/authentication/login/screens/login_screen.dart';
 import 'package:swiftfeed/main_screen.dart';
 import 'package:swiftfeed/startapp/splash_screen.dart';
 import 'package:swiftfeed/startapp/wrapper.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-
-  runApp(const MyApp());
-}
-
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SwiftFeed',
-      initialRoute: 'splash',
+      initialRoute: '/splash',
       routes: {
         '/': (context) => const Wrapper(),
         '/splash': (context) => const SplashScreen(),
         '/main': (context) {
           final user = ModalRoute.of(context)?.settings.arguments as User?;
-          // Check if user is not null before navigating to MainScreen
-          return user != null
-              ? MainScreen(user: convertUserToAnonModel(user))
-              : const LoginScreen(); // Replace LoginScreen with your desired screen
+          if (user != null) {
+            if (user.isAnonymous) {
+              return MainScreen(anonUser: convertUserToAnonModel(user));
+            } else {
+              // Replace with your logic to fetch additional details for email user
+              final emailUser = EmailUserModel(
+                userId: user.uid,
+                email: user.email ?? '',
+                username: '', // Add username if available
+              );
+
+              return MainScreen(emailUser: emailUser);
+            }
+          } else {
+            return const LoginScreen();
+          }
         },
-        // Add other routes as needed
+      },
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       },
     );
   }

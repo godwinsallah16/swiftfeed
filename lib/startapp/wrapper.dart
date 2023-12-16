@@ -1,6 +1,8 @@
+// wrapper.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
 import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model.dart';
 import 'package:swiftfeed/authentication/login/anon_login/services/anon_user_converter.dart';
 import 'package:swiftfeed/authentication/login/screens/login_screen.dart';
@@ -32,11 +34,26 @@ class _WrapperState extends State<Wrapper> {
 
       if (mounted) {
         if (firebaseUser != null) {
-          AnonUserModel user = convertUserToAnonModel(firebaseUser);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => MainScreen(user: user)),
-          );
+          if (firebaseUser.isAnonymous) {
+            AnonUserModel user = convertUserToAnonModel(firebaseUser);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => MainScreen(anonUser: user)),
+            );
+          } else {
+            // Assume email user for now, modify as needed
+            EmailUserModel emailUser = EmailUserModel(
+              userId: firebaseUser.uid,
+              email: firebaseUser.email ?? '',
+              username: firebaseUser.displayName ?? '',
+            );
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => MainScreen(emailUser: emailUser)),
+            );
+          }
         } else {
           Navigator.pushReplacement(
             context,
@@ -49,11 +66,26 @@ class _WrapperState extends State<Wrapper> {
         if (mounted) {
           Future.delayed(const Duration(seconds: 2), () {
             if (firebaseUser != null) {
-              AnonUserModel user = convertUserToAnonModel(firebaseUser);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => MainScreen(user: user)),
-              );
+              if (firebaseUser.isAnonymous) {
+                AnonUserModel user = convertUserToAnonModel(firebaseUser);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => MainScreen(anonUser: user)),
+                );
+              } else {
+                // Assume email user for now, modify as needed
+                EmailUserModel emailUser = EmailUserModel(
+                  userId: firebaseUser.uid,
+                  email: firebaseUser.email ?? '',
+                  username: firebaseUser.displayName ?? '',
+                );
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => MainScreen(emailUser: emailUser)),
+                );
+              }
             } else {
               Navigator.pushReplacement(
                 context,
