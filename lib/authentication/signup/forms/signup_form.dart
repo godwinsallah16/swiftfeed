@@ -2,9 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
+import 'package:swiftfeed/authentication/login/screens/login_screen.dart'; // Import your login screen file
 import 'package:swiftfeed/authentication/signup/forms/email_signup_validate.dart';
 import 'package:swiftfeed/authentication/signup/services/email/sign_up.dart';
-import 'package:swiftfeed/main_screen.dart';
+import 'package:swiftfeed/utils/main_screen.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
@@ -14,6 +15,11 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
+  bool _isUsernameValid = true;
+  bool _isEmailValid = true;
+  bool _isPasswordValid = true;
+  bool _isConfirmPasswordValid = true;
+
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -24,91 +30,192 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextFormField(
-            controller: _usernameController,
-            decoration: const InputDecoration(
-              labelText: 'Username',
-              border: OutlineInputBorder(),
+    return WillPopScope(
+      onWillPop: () async {
+        // Navigate to login screen when the user tries to go back
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+        return false; // Prevents the default back navigation
+      },
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              controller: _usernameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
+                border: const OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isUsernameValid ? Colors.blue : Colors.red,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isUsernameValid ? Colors.blue : Colors.red,
+                  ),
+                ),
+              ),
+              validator: validateUsername,
+              onChanged: (value) {
+                setState(() {
+                  _isUsernameValid =
+                      value.isEmpty || validateUsername(value) == null;
+                });
+                _validateForm();
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
-            validator: validateUsername,
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              border: OutlineInputBorder(),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: const OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isEmailValid ? Colors.blue : Colors.red,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isEmailValid ? Colors.blue : Colors.red,
+                  ),
+                ),
+              ),
+              validator: validateEmail,
+              onChanged: (value) {
+                setState(() {
+                  _isEmailValid = value.isEmpty || validateEmail(value) == null;
+                });
+                _validateForm();
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
-            validator: validateEmail,
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _passwordController,
-            obscureText: true,
-            decoration: const InputDecoration(
-              labelText: 'Password',
-              border: OutlineInputBorder(),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: const OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isPasswordValid ? Colors.blue : Colors.red,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isPasswordValid ? Colors.blue : Colors.red,
+                  ),
+                ),
+              ),
+              validator: validatePassword,
+              onChanged: (value) {
+                setState(() {
+                  _isPasswordValid =
+                      value.isEmpty || validatePassword(value) == null;
+                });
+                _validateForm();
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
-            validator: validatePassword,
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _confirmPasswordController,
-            obscureText: true,
-            decoration: const InputDecoration(
-              labelText: 'Confirm Password',
-              border: OutlineInputBorder(),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: _confirmPasswordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Confirm Password',
+                border: const OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isConfirmPasswordValid ? Colors.blue : Colors.red,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isConfirmPasswordValid ? Colors.blue : Colors.red,
+                  ),
+                ),
+              ),
+              validator: (value) => validateConfirmPassword(
+                _passwordController.text,
+                value,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _isConfirmPasswordValid = value.isEmpty ||
+                      validateConfirmPassword(
+                              _passwordController.text, value) ==
+                          null;
+                });
+                _validateForm();
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
-            validator: (value) => validateConfirmPassword(
-              _passwordController.text,
-              value,
-            ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () async {
-              if (_formKey.currentState?.validate() ?? false) {
-                String username = _usernameController.text;
-                String email = _emailController.text;
-                String password = _passwordController.text;
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                _validateForm();
 
-                // Call the signup function
-                var firebaseUser =
-                    await EmailSignup().signUpWithEmailAndPassword(
-                  email,
-                  password,
-                  username,
-                );
+                if (_isUsernameValid &&
+                    _isEmailValid &&
+                    _isPasswordValid &&
+                    _isConfirmPasswordValid) {
+                  String username = _usernameController.text;
+                  String email = _emailController.text;
+                  String password = _passwordController.text;
 
-                if (firebaseUser != null) {
-                  // Signup successful, navigate to MainScreen
-                  EmailUserModel emailUser = EmailUserModel(
-                    userId: firebaseUser.uid,
-                    email: email,
-                    username: username,
+                  // Call the signup function
+                  var firebaseUser =
+                      await EmailSignup().signUpWithEmailAndPassword(
+                    email,
+                    password,
+                    username,
                   );
 
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => MainScreen(emailUser: emailUser)),
-                  );
-                } else {
-                  // Handle signup failure, display an error message if needed
-                  print('Signup failed');
+                  if (firebaseUser != null) {
+                    // Signup successful, navigate to MainScreen
+                    EmailUserModel emailUser = EmailUserModel(
+                      userId: firebaseUser.uid,
+                      email: email,
+                      username: username,
+                    );
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => MainScreen(emailUser: emailUser)),
+                    );
+                  } else {
+                    // Handle signup failure, display an error message if needed
+                    print('Signup failed');
+                  }
                 }
-              }
-            },
-            child: const Text('Sign Up'),
-          ),
-        ],
+              },
+              child: const Text('Sign Up'),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _validateForm() {
+    setState(() {
+      _isEmailValid = _emailController.text.isEmpty ||
+          validateEmail(_emailController.text) == null;
+      _isPasswordValid = _passwordController.text.isEmpty ||
+          validatePassword(_passwordController.text) == null;
+      _isConfirmPasswordValid = _confirmPasswordController.text.isEmpty ||
+          validateConfirmPassword(
+                  _passwordController.text, _confirmPasswordController.text) ==
+              null;
+    });
   }
 
   @override

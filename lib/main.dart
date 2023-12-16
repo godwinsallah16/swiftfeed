@@ -1,11 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
 import 'package:swiftfeed/authentication/login/anon_login/services/anon_user_converter.dart';
 import 'package:swiftfeed/authentication/login/screens/login_screen.dart';
-import 'package:swiftfeed/main_screen.dart';
+import 'package:swiftfeed/utils/main_screen.dart';
 import 'package:swiftfeed/startapp/splash_screen.dart';
 import 'package:swiftfeed/startapp/wrapper.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -40,6 +48,21 @@ class MyApp extends StatelessWidget {
       },
       onGenerateRoute: (settings) {
         return MaterialPageRoute(builder: (_) => const SplashScreen());
+      },
+      builder: (context, child) {
+        // Intercept the root navigator's back button to show the exit confirmation dialog
+        return WillPopScope(
+          onWillPop: () async {
+            // Delegate the quit app functionality to the LoginScreen
+            return await Navigator.of(context).push<bool>(
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                ) ??
+                false;
+          },
+          child: child!,
+        );
       },
     );
   }

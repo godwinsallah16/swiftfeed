@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model.dart';
 import 'package:swiftfeed/authentication/login/anon_login/services/anonymous_signin.dart';
-import 'package:swiftfeed/main_screen.dart';
+import 'package:swiftfeed/utils/main_screen.dart';
 
 class AnonymousButton extends StatefulWidget {
   const AnonymousButton({super.key});

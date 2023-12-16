@@ -5,11 +5,8 @@ class AddNewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add'),
-      ),
-      body: const Center(
+    return const Scaffold(
+      body: Center(
         child: Text('Add Screen Content'),
       ),
     );

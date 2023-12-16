@@ -16,23 +16,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Home',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.grey[800],
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                // Open the drawer when the menu icon is tapped
-                Scaffold.of(context).openDrawer();
-              },
-            ),
-          ],
-        ),
         body: SafeArea(
           child: NewsScreen(
             newsList: [

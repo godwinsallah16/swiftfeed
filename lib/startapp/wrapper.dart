@@ -6,7 +6,7 @@ import 'package:swiftfeed/authentication/login/account_login/models/account_user
 import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model.dart';
 import 'package:swiftfeed/authentication/login/anon_login/services/anon_user_converter.dart';
 import 'package:swiftfeed/authentication/login/screens/login_screen.dart';
-import 'package:swiftfeed/main_screen.dart';
+import 'package:swiftfeed/utils/main_screen.dart';
 import 'package:swiftfeed/startapp/splash_screen.dart';
 
 class Wrapper extends StatefulWidget {

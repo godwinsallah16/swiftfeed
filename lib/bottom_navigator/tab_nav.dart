@@ -1,17 +1,28 @@
 // tab_navigator.dart
+
 import 'package:flutter/material.dart';
 
 class TabNavigatorItem {
   final Widget page;
   final BottomNavigationBarItem item;
+  final String title;
 
-  TabNavigatorItem({required this.page, required this.item});
+  TabNavigatorItem({
+    required this.page,
+    required this.item,
+    required this.title,
+  });
 }
 
 class TabNavigator extends StatefulWidget {
   final List<TabNavigatorItem> items;
+  final Function(int) onTabChanged;
 
-  const TabNavigator({super.key, required this.items});
+  const TabNavigator({
+    Key? key,
+    required this.items,
+    required this.onTabChanged,
+  }) : super(key: key);
 
   @override
   _TabNavigatorState createState() => _TabNavigatorState();
@@ -25,16 +36,15 @@ class _TabNavigatorState extends State<TabNavigator> {
     return Scaffold(
       body: widget.items[_currentIndex].page,
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.grey, // Set the selected item color
+        selectedItemColor: Colors.grey,
         unselectedItemColor: Colors.white,
         items: widget.items.map((item) => item.item).toList(),
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(
-            () {
-              _currentIndex = index;
-            },
-          );
+          widget.onTabChanged(index);
+          setState(() {
+            _currentIndex = index;
+          });
         },
       ),
     );

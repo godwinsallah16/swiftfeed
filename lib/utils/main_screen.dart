@@ -8,13 +8,20 @@ import 'package:swiftfeed/news/add_news/screens/add_news.dart';
 import 'package:swiftfeed/news/bookmark/screens/bookmark.dart';
 import 'package:swiftfeed/settings/screens/settings.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   final AnonUserModel? anonUser;
   final EmailUserModel? emailUser;
 
-  MainScreen({super.key, this.anonUser, this.emailUser});
+  const MainScreen({Key? key, this.anonUser, this.emailUser}) : super(key: key);
 
-  final List<TabNavigatorItem> items = [
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _currentIndex = 0;
+
+  final List<TabNavigatorItem> _tabItems = [
     TabNavigatorItem(
       page: const Home(),
       item: const BottomNavigationBarItem(
@@ -22,6 +29,7 @@ class MainScreen extends StatelessWidget {
         icon: Icon(Icons.home),
         label: 'Home',
       ),
+      title: 'Home',
     ),
     TabNavigatorItem(
       page: const AddNewsScreen(),
@@ -30,6 +38,7 @@ class MainScreen extends StatelessWidget {
         icon: Icon(Icons.add),
         label: 'Add',
       ),
+      title: 'Add News',
     ),
     TabNavigatorItem(
       page: const BookmarkScreen(),
@@ -38,6 +47,7 @@ class MainScreen extends StatelessWidget {
         icon: Icon(Icons.bookmark),
         label: 'Bookmark',
       ),
+      title: 'Bookmark',
     ),
     TabNavigatorItem(
       page: const SettingsScreen(),
@@ -46,20 +56,28 @@ class MainScreen extends StatelessWidget {
         icon: Icon(Icons.settings),
         label: 'Settings',
       ),
+      title: 'Settings',
     ),
   ];
+
+  void _onTabChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SwiftFeed'),
+        title: Text(_tabItems[_currentIndex].title),
+        backgroundColor: Colors.grey[100],
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
@@ -71,21 +89,22 @@ class MainScreen extends StatelessWidget {
                 ),
               ),
             ),
-            if (anonUser != null)
+            if (widget.anonUser != null)
               ListTile(
-                title: Text('Username: ${anonUser!.userId}'),
-                // Other details for anonymous user...
+                title: Text('Username: ${widget.anonUser!.userId}'),
               ),
-            if (emailUser != null)
+            if (widget.emailUser != null)
               ListTile(
-                title: Text('Email: ${emailUser!.email}'),
-                subtitle: Text('Username: ${emailUser!.username}'),
-                // Other details for email user...
+                title: Text('Email: ${widget.emailUser!.email}'),
+                subtitle: Text('Username: ${widget.emailUser!.username}'),
               ),
           ],
         ),
       ),
-      body: TabNavigator(items: items),
+      body: TabNavigator(
+        items: _tabItems,
+        onTabChanged: _onTabChanged,
+      ),
     );
   }
 }

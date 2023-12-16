@@ -12,8 +12,8 @@ String? validateEmail(String? value) {
     return 'Please enter your email';
   }
 
-  // Basic email format validation using regular expression
-  final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+  // Updated email format validation using the modified regular expression
+  final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,5}$');
   if (!emailRegex.hasMatch(value!)) {
     return 'Invalid email format';
   }
