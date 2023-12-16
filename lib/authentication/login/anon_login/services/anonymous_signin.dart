@@ -5,10 +5,9 @@ class AnonymousSignin {
 
   Future<User?> signInAnon() async {
     try {
-      UserCredential result = await _auth.signInAnonymously();
-      return result.user;
+      return (await _auth.signInAnonymously()).user;
     } catch (e) {
-      print(e.toString());
+      print('Error signing in anonymously: $e');
       return null;
     }
   }

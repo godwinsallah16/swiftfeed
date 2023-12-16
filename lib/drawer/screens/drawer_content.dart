@@ -6,7 +6,7 @@ import 'package:swiftfeed/drawer/user_account/user_info.dart';
 class DrawerContent extends StatelessWidget {
   final AnonUserModel user; // Add user parameter
 
-  const DrawerContent({Key? key, required this.user}) : super(key: key);
+  const DrawerContent({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {

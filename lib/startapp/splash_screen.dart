@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:swiftfeed/authentication/login/screens/login_screen.dart';
+import 'package:swiftfeed/startapp/wrapper.dart';
 
-class Splash extends StatefulWidget {
-  const Splash({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<Splash> createState() => _SplashState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-    // You might want to replace the Future.delayed duration with your actual splash screen duration
-    Future.delayed(const Duration(seconds: 10), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => const LoginScreen(),
-        ),
-      );
-    });
+    // Simulate splash duration (you can adjust the duration as needed)
+    Future.delayed(
+      const Duration(seconds: 5),
+      () {
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => const Wrapper(),
+            ),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -49,8 +55,8 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
           children: [
             Image.asset(
               'assets/images/swift_logo.png',
-              width: 200,
-              height: 200,
+              width: 100,
+              height: 100,
             ),
             const SizedBox(height: 20),
             const Text(
@@ -69,6 +75,8 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 fontSize: 18,
               ),
             ),
+            const SizedBox(height: 10),
+            const CircularProgressIndicator(),
           ],
         ),
       ),

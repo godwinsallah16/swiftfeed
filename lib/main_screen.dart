@@ -11,7 +11,7 @@ import 'authentication/login/anon_login/models/anon_user_model.dart';
 class MainScreen extends StatelessWidget {
   final AnonUserModel user; // Add user argument
 
-  MainScreen({Key? key, required this.user}) : super(key: key);
+  MainScreen({super.key, required this.user});
 
   final List<TabNavigatorItem> items = [
     TabNavigatorItem(
