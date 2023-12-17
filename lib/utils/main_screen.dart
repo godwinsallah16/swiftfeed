@@ -12,7 +12,7 @@ class MainScreen extends StatefulWidget {
   final AnonUserModel? anonUser;
   final EmailUserModel? emailUser;
 
-  const MainScreen({Key? key, this.anonUser, this.emailUser}) : super(key: key);
+  const MainScreen({super.key, this.anonUser, this.emailUser});
 
   @override
   State<MainScreen> createState() => _MainScreenState();

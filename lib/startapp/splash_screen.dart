@@ -1,5 +1,5 @@
+// splash_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:swiftfeed/startapp/wrapper.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -9,33 +9,23 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
     // Simulate splash duration (you can adjust the duration as needed)
     Future.delayed(
       const Duration(seconds: 5),
-      () {
-        if (mounted) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (_) => const Wrapper(),
-            ),
-          );
-        }
+      () async {
+        Widget screen = await Wrapper.initializeApp();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => screen,
+          ),
+        );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
-    super.dispose();
   }
 
   @override

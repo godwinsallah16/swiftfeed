@@ -1,115 +1,42 @@
 // wrapper.dart
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
-import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model.dart';
 import 'package:swiftfeed/authentication/login/anon_login/services/anon_user_converter.dart';
 import 'package:swiftfeed/authentication/login/screens/login_screen.dart';
 import 'package:swiftfeed/utils/main_screen.dart';
-import 'package:swiftfeed/startapp/splash_screen.dart';
 
-class Wrapper extends StatefulWidget {
-  const Wrapper({super.key});
-
-  @override
-  State<Wrapper> createState() => _WrapperState();
-}
-
-class _WrapperState extends State<Wrapper> {
-  bool _isInitialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    initializeApp();
-  }
-
-  Future<void> initializeApp() async {
+class Wrapper {
+  static Future<Widget> initializeApp() async {
     try {
-      await Firebase.initializeApp();
       FirebaseAuth auth = FirebaseAuth.instance;
 
       User? firebaseUser = auth.currentUser;
 
-      if (mounted) {
-        if (firebaseUser != null) {
-          if (firebaseUser.isAnonymous) {
-            AnonUserModel user = convertUserToAnonModel(firebaseUser);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => MainScreen(anonUser: user)),
-            );
-          } else {
-            // Assume email user for now, modify as needed
-            EmailUserModel emailUser = EmailUserModel(
-              userId: firebaseUser.uid,
-              email: firebaseUser.email ?? '',
-              username: firebaseUser.displayName ?? '',
-            );
-
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => MainScreen(emailUser: emailUser)),
-            );
-          }
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
-          );
-        }
+      if (firebaseUser != null) {
+        return determineScreen(firebaseUser);
+      } else {
+        return const LoginScreen();
       }
-
-      auth.authStateChanges().listen((User? firebaseUser) {
-        if (mounted) {
-          Future.delayed(const Duration(seconds: 2), () {
-            if (firebaseUser != null) {
-              if (firebaseUser.isAnonymous) {
-                AnonUserModel user = convertUserToAnonModel(firebaseUser);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => MainScreen(anonUser: user)),
-                );
-              } else {
-                // Assume email user for now, modify as needed
-                EmailUserModel emailUser = EmailUserModel(
-                  userId: firebaseUser.uid,
-                  email: firebaseUser.email ?? '',
-                  username: firebaseUser.displayName ?? '',
-                );
-
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => MainScreen(emailUser: emailUser)),
-                );
-              }
-            } else {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-              );
-            }
-          });
-        }
-      });
     } catch (e) {
       print('Error initializing app: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isInitialized = true;
-        });
-      }
+      return const LoginScreen();
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isInitialized ? const SplashScreen() : Container(),
-    );
+  static Future<Widget> determineScreen(User firebaseUser) async {
+    // Determine the appropriate screen based on authentication status
+    if (firebaseUser.isAnonymous) {
+      return MainScreen(anonUser: convertUserToAnonModel(firebaseUser));
+    } else {
+      // Assume email user for now, modify as needed
+      return MainScreen(
+        emailUser: EmailUserModel(
+          userId: firebaseUser.uid,
+          email: firebaseUser.email ?? '',
+          username: firebaseUser.displayName ?? '',
+        ),
+      );
+    }
   }
 }

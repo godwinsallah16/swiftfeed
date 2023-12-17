@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
 import 'package:swiftfeed/authentication/login/anon_login/services/anon_user_converter.dart';
 import 'package:swiftfeed/authentication/login/screens/login_screen.dart';
-import 'package:swiftfeed/utils/main_screen.dart';
 import 'package:swiftfeed/startapp/splash_screen.dart';
-import 'package:swiftfeed/startapp/wrapper.dart';
+import 'package:swiftfeed/utils/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
   runApp(const MyApp());
 }
 
@@ -24,9 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'SwiftFeed',
       initialRoute: '/splash',
       routes: {
-        '/': (context) => const Wrapper(),
-        '/splash': (context) => const SplashScreen(),
-        '/main': (context) {
+        '/': (context) {
           final user = ModalRoute.of(context)?.settings.arguments as User?;
           if (user != null) {
             if (user.isAnonymous) {
@@ -45,8 +41,10 @@ class MyApp extends StatelessWidget {
             return const LoginScreen();
           }
         },
+        '/splash': (context) => const SplashScreen(),
       },
       onGenerateRoute: (settings) {
+        // Handle unknown routes here, e.g., navigate to '/'
         return MaterialPageRoute(builder: (_) => const SplashScreen());
       },
       builder: (context, child) {
