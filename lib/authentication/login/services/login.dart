@@ -15,8 +15,8 @@ class LoginServices {
       );
 
       return userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      throw e;
+    } on FirebaseAuthException {
+      rethrow;
     }
   }
 }

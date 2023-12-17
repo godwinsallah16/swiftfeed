@@ -20,28 +20,31 @@ class _HomeState extends State<Home> {
           child: NewsScreen(
             newsList: [
               News(
-                title: 'Sample News',
-                media: Image.asset('assets/images/swift_logo.png'),
-                likeCount: 15,
-                commentCount: 7,
+                title:
+                    'Mahama pledges petro-chemical industry and economic boost for Jomoro',
+                media: Image.asset('assets/images/mahama.jpg'),
+                likeCount: 55,
+                commentCount: 8,
               ),
               News(
-                title: 'Sample News',
-                media: Image.asset('assets/images/swift_logo.png'),
-                likeCount: 15,
-                commentCount: 7,
+                title:
+                    'Trend analysis indicates that six persons died daily from road crashes, the National Road Safety Authority (NRSA) has stated',
+                media: Image.asset('assets/images/crash.png'),
+                likeCount: 78,
+                commentCount: 57,
               ),
               News(
-                title: 'Sample News',
-                media: Image.asset('assets/images/swift_logo.png'),
-                likeCount: 15,
-                commentCount: 7,
+                title: 'The Gods Are Not to Blame’ returns on popular demand',
+                media: Image.asset('assets/images/gods.png'),
+                likeCount: 235,
+                commentCount: 47,
               ),
               News(
-                title: 'Sample News',
-                media: Image.asset('assets/images/swift_logo.png'),
-                likeCount: 15,
-                commentCount: 7,
+                title:
+                    'Ministry proposes 544% increase in passport application fees',
+                media: Image.asset('assets/images/passoffice.jpg'),
+                likeCount: 45,
+                commentCount: 23,
               ),
             ],
           ),

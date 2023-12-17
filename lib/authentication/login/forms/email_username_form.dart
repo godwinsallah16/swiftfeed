@@ -1,15 +1,16 @@
-// email_username_form.dart
+// email_login_form.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfeed/authentication/login/account_login/screens/login_button.dart';
+import 'package:swiftfeed/authentication/login/password_reset/services/password_reset.dart';
 import 'package:swiftfeed/authentication/login/services/login.dart';
 
 class EmailUsernameForm extends StatefulWidget {
   const EmailUsernameForm({super.key});
 
   static void setError(BuildContext context, String errorMessage) {
-    final _formState = Form.of(context);
-    (_formState as _EmailUsernameFormState).setError(errorMessage);
+    final formState = Form.of(context);
+    (formState as _EmailUsernameFormState).setError(errorMessage);
   }
 
   @override
@@ -22,7 +23,7 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
-
+  final bool _isLoading = false;
   String _errorMessage = '';
 
   void setError(String errorMessage) {
@@ -96,11 +97,29 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
             style: const TextStyle(color: Colors.red),
           ),
           const SizedBox(height: 10),
-          LoginButton(
-            emailController: _emailUsernameController,
-            passwordController: _passwordController,
-            onLogin: _login,
-          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              LoginButton(
+                emailController: _emailUsernameController,
+                passwordController: _passwordController,
+                onLogin: _login,
+                isLoading: _isLoading,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (_emailUsernameController.text.isNotEmpty) {
+                    // Email is provided, initiate password reset
+                    _initiatePasswordReset(_emailUsernameController.text);
+                  } else {
+                    // Show dialog for email input
+                    _showEmailInputDialog(context);
+                  }
+                },
+                child: const Text('Forgot Password'),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -132,6 +151,62 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
       // Handle other exceptions
       setError('Login failed. $e');
     }
+  }
+
+  Future<void> _initiatePasswordReset(String email) async {
+    try {
+      await PasswordResetLogic.sendResetCode(email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password reset email sent. Check your inbox.'),
+        ),
+      );
+    } on PasswordResetException catch (e) {
+      setError(e.message);
+    }
+  }
+
+  Future<void> _showEmailInputDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Forgot Password'),
+          content: TextFormField(
+            controller:
+                _emailUsernameController, // Use the email controller here
+            decoration: const InputDecoration(
+              labelText: 'Enter your email',
+            ),
+            validator: (value) {
+              if (value?.isEmpty ?? true) {
+                return 'Please enter your email';
+              }
+              return null;
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState?.validate() ?? false) {
+                  // Implement logic to handle the entered email
+                  // For simplicity, I'm just printing it here
+                  print('Entered email: ${_emailUsernameController.text}');
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
