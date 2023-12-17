@@ -53,9 +53,9 @@ class _AnonymousButtonState extends State<AnonymousButton> {
       } else {
         _handleSignInError();
       }
-    } catch (e, stackTrace) {
-      print('Error signing in anonymously: $e');
-      print('Stack Trace: $stackTrace');
+    } catch (e) {
+      // print('Error signing in anonymously: $e');
+      // print('Stack Trace: $stackTrace');
       _handleSignInError();
     } finally {
       setState(() {
@@ -82,7 +82,7 @@ class _AnonymousButtonState extends State<AnonymousButton> {
   }
 
   void _handleSignInError() {
-    print('Error signing in anonymously');
+    // print('Error signing in anonymously');
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Anonymous sign-in failed'),

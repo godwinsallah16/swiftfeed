@@ -31,7 +31,7 @@ class GmailButton extends StatelessWidget {
           );
         } else {
           // Handle sign-in failure, display an error message if needed
-          print('Sign-in with Google failed');
+          // print('Sign-in with Google failed');
         }
       },
       child: Row(

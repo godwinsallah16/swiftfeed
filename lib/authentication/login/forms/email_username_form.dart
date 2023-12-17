@@ -104,9 +104,9 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
                 emailController: _emailUsernameController,
                 passwordController: _passwordController,
                 onLogin: _login,
-                isLoading: _isLoading,
+                isLoading: _isLoading, // Pass isLoading to LoginButton
               ),
-              ElevatedButton(
+              TextButton(
                 onPressed: () {
                   if (_emailUsernameController.text.isNotEmpty) {
                     // Email is provided, initiate password reset
@@ -137,7 +137,7 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
         Navigator.pushReplacementNamed(context, '/', arguments: user);
       } else {
         // Handle null user (shouldn't happen in normal cases)
-        print('Login failed. User is null.');
+        // print('Login failed. User is null.');
       }
     } on FirebaseAuthException catch (e) {
       // Handle FirebaseAuthException and set error message
@@ -197,7 +197,7 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
                 if (_formKey.currentState?.validate() ?? false) {
                   // Implement logic to handle the entered email
                   // For simplicity, I'm just printing it here
-                  print('Entered email: ${_emailUsernameController.text}');
+                  // print('Entered email: ${_emailUsernameController.text}');
                   Navigator.pop(context);
                 }
               },

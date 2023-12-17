@@ -33,7 +33,7 @@ class EmailSignup {
 
       return updatedUser;
     } catch (e) {
-      print('Error signing up with email and password: $e');
+      // print('Error signing up with email and password: $e');
       return null;
     }
   }

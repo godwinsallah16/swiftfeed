@@ -5,14 +5,14 @@ class LoginButton extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final VoidCallback onLogin;
-  final bool isLoading; // New property for loading state
+  final bool isLoading; // Add this line
 
   const LoginButton({
     super.key,
     required this.emailController,
     required this.passwordController,
     required this.onLogin,
-    required this.isLoading, // Pass loading state as a parameter
+    required this.isLoading, // Add this line
   });
 
   @override
@@ -20,14 +20,7 @@ class LoginButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: isLoading ? null : onLogin, // Disable button when loading
       child: isLoading
-          ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
+          ? const CircularProgressIndicator() // Show loading indicator
           : const Text('Login'),
     );
   }

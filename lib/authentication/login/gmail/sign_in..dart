@@ -22,7 +22,7 @@ class GoogleSignin {
         User? user = authResult.user;
 
         if (user != null) {
-          print('User signed in: ${user.displayName}');
+          // print('User signed in: ${user.displayName}');
           // Perform further actions, e.g., navigate to the next screen
         }
 
@@ -31,7 +31,7 @@ class GoogleSignin {
         return null; // User canceled the sign-in
       }
     } catch (error) {
-      print(error);
+      // print(error);
       return null;
     }
   }

@@ -1,5 +1,6 @@
 // wrapper.dart
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
 import 'package:swiftfeed/authentication/login/anon_login/services/anon_user_converter.dart';
@@ -8,6 +9,7 @@ import 'package:swiftfeed/utils/main_screen.dart';
 
 class Wrapper {
   static Future<Widget> initializeApp() async {
+    await Firebase.initializeApp();
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -19,7 +21,7 @@ class Wrapper {
         return const LoginScreen();
       }
     } catch (e) {
-      print('Error initializing app: $e');
+      // print('Error initializing app: $e');
       return const LoginScreen();
     }
   }

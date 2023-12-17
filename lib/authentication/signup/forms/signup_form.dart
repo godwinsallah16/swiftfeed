@@ -193,7 +193,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     );
                   } else {
                     // Handle signup failure, display an error message if needed
-                    print('Signup failed');
+                    // print('Signup failed');
                   }
                 }
               },

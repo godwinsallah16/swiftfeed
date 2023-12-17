@@ -7,7 +7,7 @@ class AnonymousSignin {
     try {
       return (await _auth.signInAnonymously()).user;
     } catch (e) {
-      print('Error signing in anonymously: $e');
+      // print('Error signing in anonymously: $e');
       return null;
     }
   }
