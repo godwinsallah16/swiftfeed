@@ -1,4 +1,5 @@
 // gmail_button.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
 import 'package:swiftfeed/authentication/login/gmail/sign_in..dart';
@@ -14,14 +15,24 @@ class GmailButton extends StatelessWidget {
         var firebaseUser = await GoogleSignin().signInWithGoogle();
 
         if (firebaseUser != null) {
-          // Sign-in successful, create EmailUserModel
+          // Retrieve additional user data (e.g., profileImageURL) from Firestore
+          DocumentSnapshot userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(firebaseUser.uid)
+              .get();
+          Map<String, dynamic>? userData =
+              userDoc.data() as Map<String, dynamic>?;
+
+          // Create EmailUserModel with profileImageURL
           String username = firebaseUser.displayName ?? '';
           String email = firebaseUser.email ?? '';
+          String profileImageURL = userData?['profileImageURL'] ?? '';
 
           EmailUserModel emailUser = EmailUserModel(
             userId: firebaseUser.uid,
             email: email,
             username: username,
+            profileImageURL: profileImageURL,
           );
 
           // Navigate to MainScreen

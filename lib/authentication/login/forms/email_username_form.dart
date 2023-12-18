@@ -1,4 +1,5 @@
 // email_login_form.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +137,7 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
       );
 
       if (user != null) {
-        // Retrieve additional user data (e.g., username) from Firestore
+        // Retrieve additional user data (e.g., username, profileImageURL) from Firestore
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
@@ -146,12 +147,19 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
 
         if (userData != null) {
           String username = userData['username'] ?? '';
+          String profileImageURL = userData['profileImageURL'] ?? '';
 
-          // Create an instance of EmailUserModel
+          // Download the profile image during login
+          await CachedNetworkImageProvider(profileImageURL).resolve(
+            const ImageConfiguration(),
+          );
+
+          // Create an instance of EmailUserModel with profileImageURL
           EmailUserModel emailUser = EmailUserModel(
             userId: user.uid,
             email: user.email ?? '',
             username: username,
+            profileImageURL: profileImageURL,
           );
 
           // Successfully logged in, navigate to MainScreen with EmailUserModel

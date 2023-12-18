@@ -1,8 +1,8 @@
-// main_screen.dart
 import 'package:flutter/material.dart';
 import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
 import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model.dart';
 import 'package:swiftfeed/bottom_navigator/tab_nav.dart';
+import 'package:swiftfeed/drawer/forms/content.dart';
 import 'package:swiftfeed/home/screens/home.dart';
 import 'package:swiftfeed/news/add_news/screens/add_news.dart';
 import 'package:swiftfeed/news/bookmark/screens/bookmark.dart';
@@ -73,34 +73,8 @@ class _MainScreenState extends State<MainScreen> {
         title: Text(_tabItems[_currentIndex].title),
         backgroundColor: Colors.grey[100],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'User Account',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            if (widget.anonUser != null)
-              ListTile(
-                title: Text('Username: ${widget.anonUser!.userId}'),
-              ),
-            if (widget.emailUser != null)
-              ListTile(
-                title: Text('Email: ${widget.emailUser!.email}'),
-                subtitle: Text('Username: ${widget.emailUser!.username}'),
-              ),
-          ],
-        ),
-      ),
+      drawer: DrawerContentForm(
+          emailUser: widget.emailUser, anonUser: widget.anonUser),
       body: TabNavigator(
         items: _tabItems,
         onTabChanged: _onTabChanged,
