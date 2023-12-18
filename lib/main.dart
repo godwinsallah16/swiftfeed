@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
           }
         },
         '/splash': (context) => const SplashScreen(),
+        '/login': (context) => const LoginScreen(),
       },
       onGenerateRoute: (settings) {
         // Handle unknown routes here, e.g., navigate to '/'

@@ -1,4 +1,3 @@
-// email_user_model.dart
 class EmailUserModel {
   final String userId;
   final String email;

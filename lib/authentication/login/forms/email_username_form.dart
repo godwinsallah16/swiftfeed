@@ -1,9 +1,12 @@
 // email_login_form.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
 import 'package:swiftfeed/authentication/login/account_login/screens/login_button.dart';
 import 'package:swiftfeed/authentication/login/password_reset/services/password_reset.dart';
 import 'package:swiftfeed/authentication/login/services/login.dart';
+import 'package:swiftfeed/utils/main_screen.dart';
 
 class EmailUsernameForm extends StatefulWidget {
   const EmailUsernameForm({super.key});
@@ -133,8 +136,33 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
       );
 
       if (user != null) {
-        // Successfully logged in, navigate to MainScreen
-        Navigator.pushReplacementNamed(context, '/', arguments: user);
+        // Retrieve additional user data (e.g., username) from Firestore
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        Map<String, dynamic>? userData =
+            userDoc.data() as Map<String, dynamic>?;
+
+        if (userData != null) {
+          String username = userData['username'] ?? '';
+
+          // Create an instance of EmailUserModel
+          EmailUserModel emailUser = EmailUserModel(
+            userId: user.uid,
+            email: user.email ?? '',
+            username: username,
+          );
+
+          // Successfully logged in, navigate to MainScreen with EmailUserModel
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => MainScreen(emailUser: emailUser)),
+          );
+        } else {
+          // Handle null user data
+          setError('Failed to retrieve user data');
+        }
       } else {
         // Handle null user (shouldn't happen in normal cases)
         // print('Login failed. User is null.');
