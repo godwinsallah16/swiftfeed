@@ -150,7 +150,7 @@ class _EmailUsernameFormState extends State<EmailUsernameForm> {
           String profileImageURL = userData['profileImageURL'] ?? '';
 
           // Download the profile image during login
-          await CachedNetworkImageProvider(profileImageURL).resolve(
+          CachedNetworkImageProvider(profileImageURL).resolve(
             const ImageConfiguration(),
           );
 

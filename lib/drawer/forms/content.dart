@@ -7,8 +7,7 @@ class DrawerContentForm extends StatelessWidget {
   final EmailUserModel? emailUser;
   final AnonUserModel? anonUser;
 
-  const DrawerContentForm({Key? key, this.emailUser, this.anonUser})
-      : super(key: key);
+  const DrawerContentForm({super.key, this.emailUser, this.anonUser});
 
   @override
   Widget build(BuildContext context) {
@@ -20,35 +19,35 @@ class DrawerContentForm extends StatelessWidget {
               emailUser: emailUser,
               anonUser: anonUser), // Include AccountDrawerHeader here
           ListTile(
-            title: Text('Sports'),
+            title: const Text('Sports'),
             onTap: () {
               // Navigate to the sports news screen or perform the desired action
               Navigator.pop(context); // Close the drawer
             },
           ),
           ListTile(
-            title: Text('Entertainment'),
+            title: const Text('Entertainment'),
             onTap: () {
               // Navigate to the entertainment news screen or perform the desired action
               Navigator.pop(context); // Close the drawer
             },
           ),
           ListTile(
-            title: Text('Business'),
+            title: const Text('Business'),
             onTap: () {
               // Navigate to the business news screen or perform the desired action
               Navigator.pop(context); // Close the drawer
             },
           ),
           ListTile(
-            title: Text('Politics'),
+            title: const Text('Politics'),
             onTap: () {
               // Navigate to the politics news screen or perform the desired action
               Navigator.pop(context); // Close the drawer
             },
           ),
           ListTile(
-            title: Text('Foreign'),
+            title: const Text('Foreign'),
             onTap: () {
               // Navigate to the foreign news screen or perform the desired action
               Navigator.pop(context); // Close the drawer

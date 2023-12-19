@@ -43,7 +43,7 @@ class Wrapper {
         // Check if the profile image is already in cache
         if (!ImageCache().containsKey(profileImageURL)) {
           // If not in cache, download and precache the image
-          await CachedNetworkImageProvider(profileImageURL)
+          CachedNetworkImageProvider(profileImageURL)
               .resolve(const ImageConfiguration());
         }
 

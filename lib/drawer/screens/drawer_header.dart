@@ -6,16 +6,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../authentication/login/account_login/models/account_user.dart';
-import '../../authentication/login/anon_login/models/anon_user_model.dart';
+import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
+import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model.dart';
 
 class AccountDrawerHeader extends StatefulWidget {
   final EmailUserModel? emailUser;
   final AnonUserModel? anonUser;
 
-  const AccountDrawerHeader({Key? key, this.emailUser, this.anonUser})
-      : super(key: key);
+  const AccountDrawerHeader({super.key, this.emailUser, this.anonUser});
 
   @override
   _AccountDrawerHeaderState createState() => _AccountDrawerHeaderState();
@@ -36,7 +34,7 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
       // Check if the profile image is already in cache
       if (!ImageCache().containsKey(widget.emailUser!.profileImageURL!)) {
         // If not in cache, download and precache the image
-        await CachedNetworkImageProvider(widget.emailUser!.profileImageURL!)
+        CachedNetworkImageProvider(widget.emailUser!.profileImageURL!)
             .resolve(const ImageConfiguration());
       }
 
@@ -89,7 +87,7 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
       child: CircleAvatar(
         radius: 60,
         backgroundImage:
-            imageProvider ?? AssetImage('assets/placeholder_image.png'),
+            imageProvider ?? const AssetImage('assets/placeholder_image.png'),
         backgroundColor: Colors.transparent,
         child: _selectedImage == null && _profileImageURL.isEmpty
             ? const Icon(Icons.account_circle)
@@ -99,27 +97,56 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
   }
 
   Future<void> _showImagePreview(ImageProvider<Object>? imageProvider) async {
-    showDialog(
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    showGeneralDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Container(
-            height: MediaQuery.of(context).size.height * 0.6,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: imageProvider!,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (BuildContext buildContext, Animation<double> animation,
+          Animation<double> secondaryAnimation) {
+        return Dismissible(
+          key: const Key('dismissibleKey'),
+          onDismissed: (direction) {
+            Navigator.of(context).pop();
+          },
+          background: Container(color: Colors.transparent),
+          child: Center(
+            child: GestureDetector(
+              onVerticalDragDown: (_) {},
+              onVerticalDragUpdate: (details) {
+                // Handle vertical drag update
+                double delta = details.primaryDelta!;
+                double newHeight = screenHeight * 0.6 + delta;
+                if (newHeight > 0 && newHeight < screenHeight) {
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Container(
+                width: screenWidth,
+                height: screenHeight * 0.6,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: imageProvider!,
+                  ),
+                ),
               ),
             ),
           ),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
+        );
+      },
+      transitionBuilder: (BuildContext context, Animation<double> animation,
+          Animation<double> secondaryAnimation, Widget child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          ),
+          child: child,
         );
       },
     );
