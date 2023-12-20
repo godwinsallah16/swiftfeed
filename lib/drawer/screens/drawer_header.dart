@@ -118,7 +118,6 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
             child: GestureDetector(
               onVerticalDragDown: (_) {},
               onVerticalDragUpdate: (details) {
-                // Handle vertical drag update
                 double delta = details.primaryDelta!;
                 double newHeight = screenHeight * 0.6 + delta;
                 if (newHeight > 0 && newHeight < screenHeight) {
@@ -126,11 +125,12 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
                 }
               },
               child: Container(
-                width: screenWidth,
+                width: screenWidth, // Adjusted to use screenWidth
                 height: screenHeight * 0.6,
                 decoration: BoxDecoration(
+                  color: Colors.grey[100],
                   image: DecorationImage(
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain, // Adjusted to use BoxFit.contain
                     image: imageProvider!,
                   ),
                 ),

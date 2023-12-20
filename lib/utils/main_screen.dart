@@ -20,6 +20,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  late GlobalKey<ScaffoldState> _scaffoldKey;
 
   final List<TabNavigatorItem> _tabItems = [
     TabNavigatorItem(
@@ -67,6 +68,12 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _scaffoldKey = GlobalKey<ScaffoldState>();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -74,7 +81,10 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: Colors.grey[100],
       ),
       drawer: DrawerContentForm(
-          emailUser: widget.emailUser, anonUser: widget.anonUser),
+        emailUser: widget.emailUser,
+        anonUser: widget.anonUser,
+        scaffoldKey: _scaffoldKey,
+      ),
       body: TabNavigator(
         items: _tabItems,
         onTabChanged: _onTabChanged,

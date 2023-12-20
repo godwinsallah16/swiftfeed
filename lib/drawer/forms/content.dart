@@ -6,8 +6,10 @@ import 'package:swiftfeed/drawer/screens/drawer_header.dart';
 class DrawerContentForm extends StatelessWidget {
   final EmailUserModel? emailUser;
   final AnonUserModel? anonUser;
+  final GlobalKey<ScaffoldState> scaffoldKey; // Add this line
 
-  const DrawerContentForm({super.key, this.emailUser, this.anonUser});
+  const DrawerContentForm(
+      {super.key, this.emailUser, this.anonUser, required this.scaffoldKey});
 
   @override
   Widget build(BuildContext context) {
