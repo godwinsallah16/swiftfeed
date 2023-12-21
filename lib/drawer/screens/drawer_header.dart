@@ -1,13 +1,12 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
 import 'package:swiftfeed/authentication/login/anon_login/models/anon_user_model.dart';
+
+import '../services/profile_update.dart';
 
 class AccountDrawerHeader extends StatefulWidget {
   final EmailUserModel? emailUser;
@@ -86,12 +85,10 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
       onTap: () => _showImagePreview(imageProvider),
       child: CircleAvatar(
         radius: 60,
-        backgroundImage:
-            imageProvider ?? const AssetImage('assets/placeholder_image.png'),
+        backgroundImage: imageProvider ??
+            const AssetImage(
+                'assets/icons/account-icon.jpg'), // Use asset image if no profile picture
         backgroundColor: Colors.transparent,
-        child: _selectedImage == null && _profileImageURL.isEmpty
-            ? const Icon(Icons.account_circle)
-            : null,
       ),
     );
   }
@@ -125,13 +122,14 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
                 }
               },
               child: Container(
-                width: screenWidth, // Adjusted to use screenWidth
+                width: screenWidth,
                 height: screenHeight * 0.6,
                 decoration: BoxDecoration(
                   color: Colors.grey[100],
                   image: DecorationImage(
-                    fit: BoxFit.contain, // Adjusted to use BoxFit.contain
-                    image: imageProvider!,
+                    fit: BoxFit.contain,
+                    image: imageProvider ??
+                        const AssetImage('assets/icons/account-icon.jpg'),
                   ),
                 ),
               ),
@@ -161,35 +159,9 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
         _selectedImage = File(pickedImage.path);
       });
 
-      // Store the image path in the database
-      await _updateProfileImageInDatabase(_selectedImage!.path);
-    }
-  }
-
-  Future<void> _updateProfileImageInDatabase(String imagePath) async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
       try {
-        // Upload image to Firebase Storage
-        await FirebaseStorage.instance
-            .ref('profile_images/${user.uid}.jpg')
-            .putFile(File(imagePath));
-
-        // Get the download URL of the uploaded image
-        String downloadURL = await FirebaseStorage.instance
-            .ref('profile_images/${user.uid}.jpg')
-            .getDownloadURL();
-
-        setState(() {
-          _profileImageURL = downloadURL;
-        });
-
-        // Update the profile image URL in the Firestore database
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update({'profileImageURL': _profileImageURL});
+        // Use the ProfileUpdateService to update the profile image
+        await ProfileUpdateService.updateProfileImage(_selectedImage!);
 
         // Show a snackbar only if the drawer is open
         if (Scaffold.of(context).isDrawerOpen) {
