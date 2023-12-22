@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfeed/settings/services/logout/logout.dart';
 
+import '../services/delete_account/screens/delete_account.dart';
+
 class SettingsList extends StatelessWidget {
   final List<SettingsOption> settingsOptions = [
     SettingsOption(
@@ -64,7 +66,17 @@ class SettingsList extends StatelessWidget {
       description: 'Permanently delete your account',
       onTap: (context) {
         // Handle tap on Delete Account option
-        print('Tapped on Delete Account');
+        showDialog(
+          context: context,
+          builder: (context) => DeleteAccountConfirmationDialog(
+            onConfirm: () {
+              // Handle confirmation
+              Navigator.pushReplacementNamed(
+                  context, '/login'); // Navigate to login screen
+              print('Account deleted successfully.');
+            },
+          ),
+        );
       },
       titleColor: Colors.red, // Set title color to red
     ),
