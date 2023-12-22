@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swiftfeed/authentication/login/account_login/models/account_user.dart';
@@ -12,7 +13,8 @@ class AccountDrawerHeader extends StatefulWidget {
   final EmailUserModel? emailUser;
   final AnonUserModel? anonUser;
 
-  const AccountDrawerHeader({super.key, this.emailUser, this.anonUser});
+  const AccountDrawerHeader({Key? key, this.emailUser, this.anonUser})
+      : super(key: key);
 
   @override
   _AccountDrawerHeaderState createState() => _AccountDrawerHeaderState();
@@ -20,18 +22,27 @@ class AccountDrawerHeader extends StatefulWidget {
 
 class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
   File? _selectedImage;
-  String _profileImageURL = '';
+  late String _profileImageURL = '';
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _shouldClearCache = false;
+  bool _isUpdatingImage = false;
+  bool _isDrawerOpen = false;
 
   @override
   void initState() {
     super.initState();
-    _initializeProfileImage();
+
+    // Schedule the _initializeProfileImage method after the initState is completed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeProfileImage();
+    });
   }
 
   Future<void> _initializeProfileImage() async {
     if (widget.emailUser != null && widget.emailUser!.profileImageURL != null) {
       // Check if the profile image is already in cache
       if (!ImageCache().containsKey(widget.emailUser!.profileImageURL!)) {
+        print('Profile image is not in cache, downloading and precaching...');
         // If not in cache, download and precache the image
         CachedNetworkImageProvider(widget.emailUser!.profileImageURL!)
             .resolve(const ImageConfiguration());
@@ -41,24 +52,79 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
       setState(() {
         _profileImageURL = widget.emailUser!.profileImageURL!;
       });
+
+      if (_shouldClearCache) {
+        // Clear the image cache if a new update is made
+        imageCache.clear();
+        imageCache.clearLiveImages();
+        _shouldClearCache = false; // Reset the flag
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return UserAccountsDrawerHeader(
-      decoration: const BoxDecoration(
-        color: Colors.blue,
+    return Drawer(
+      child: Builder(
+        builder: (context) {
+          _isDrawerOpen = Scaffold.of(context).isDrawerOpen;
+
+          return ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              Container(
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                height: 210, // Increase the height by 40px
+                child: DrawerHeader(
+                  margin: EdgeInsets.zero,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                  decoration: const BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onLongPress: () {
+                          if (_isDrawerOpen) {
+                            _pickImage(context);
+                          }
+                        },
+                        onTap: () {
+                          if (_isDrawerOpen) {
+                            _showImagePreview(_buildAccountImage());
+                          }
+                        },
+                        child: Stack(
+                          children: [
+                            CircleAvatar(
+                              key: ValueKey<String>(_profileImageURL),
+                              radius: 60,
+                              backgroundImage: _buildAccountImage(),
+                              backgroundColor: Colors.transparent,
+                            ),
+                            if (_isUpdatingImage)
+                              const Positioned.fill(
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildAccountName(),
+                      _buildAccountEmail(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
-      accountName: _buildAccountName(),
-      accountEmail: _buildAccountEmail(),
-      currentAccountPicture: _buildAccountImage(),
-      otherAccountsPictures: [
-        IconButton(
-          icon: const Icon(Icons.edit),
-          onPressed: () => _pickImage(),
-        ),
-      ],
     );
   }
 
@@ -70,30 +136,20 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
     return Text('Email: ${widget.emailUser?.email ?? ''}');
   }
 
-  Widget _buildAccountImage() {
-    ImageProvider<Object>? imageProvider;
-
+  ImageProvider<Object> _buildAccountImage() {
     if (_selectedImage != null) {
       // If a new image is selected, use it
-      imageProvider = FileImage(_selectedImage!);
+      return FileImage(_selectedImage!);
     } else if (_profileImageURL.isNotEmpty) {
       // If profile image URL is available, use it
-      imageProvider = CachedNetworkImageProvider(_profileImageURL);
+      return CachedNetworkImageProvider(_profileImageURL);
+    } else {
+      // Use asset image if no profile picture
+      return const AssetImage('assets/icons/account-icon.jpg');
     }
-
-    return GestureDetector(
-      onTap: () => _showImagePreview(imageProvider),
-      child: CircleAvatar(
-        radius: 60,
-        backgroundImage: imageProvider ??
-            const AssetImage(
-                'assets/icons/account-icon.jpg'), // Use asset image if no profile picture
-        backgroundColor: Colors.transparent,
-      ),
-    );
   }
 
-  Future<void> _showImagePreview(ImageProvider<Object>? imageProvider) async {
+  Future<void> _showImagePreview(ImageProvider<Object> imageProvider) async {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -128,8 +184,7 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
                   color: Colors.grey[100],
                   image: DecorationImage(
                     fit: BoxFit.contain,
-                    image: imageProvider ??
-                        const AssetImage('assets/icons/account-icon.jpg'),
+                    image: imageProvider,
                   ),
                 ),
               ),
@@ -150,21 +205,41 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
     );
   }
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(BuildContext context) async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
       setState(() {
         _selectedImage = File(pickedImage.path);
+        _isUpdatingImage = true; // Set the flag to true when update starts
       });
 
       try {
-        // Use the ProfileUpdateService to update the profile image
-        await ProfileUpdateService.updateProfileImage(_selectedImage!);
+        User? currentUser = FirebaseAuth.instance.currentUser;
 
-        // Show a snackbar only if the drawer is open
-        if (Scaffold.of(context).isDrawerOpen) {
+        if (currentUser != null) {
+          await ProfileUpdateService.updateProfileImage(
+            context,
+            currentUser,
+            _selectedImage!,
+          );
+
+          currentUser = await FirebaseAuth.instance.currentUser;
+
+          setState(() {
+            _profileImageURL =
+                currentUser?.photoURL ?? ''; // Update with the new photoURL
+            _isUpdatingImage =
+                false; // Set the flag to false when update is complete
+          });
+
+          // Trigger a rebuild of the drawer
+          _scaffoldKey.currentState?.openEndDrawer();
+          _scaffoldKey.currentState?.openDrawer();
+
+          print('Profile image updated successfully!');
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Profile image updated successfully!'),
@@ -173,6 +248,9 @@ class _AccountDrawerHeaderState extends State<AccountDrawerHeader> {
         }
       } catch (e) {
         print('Error updating profile image: $e');
+        setState(() {
+          _isUpdatingImage = false;
+        });
       }
     }
   }

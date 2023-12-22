@@ -6,10 +6,11 @@ import 'package:swiftfeed/drawer/screens/drawer_header.dart';
 class DrawerContentForm extends StatelessWidget {
   final EmailUserModel? emailUser;
   final AnonUserModel? anonUser;
-  final GlobalKey<ScaffoldState> scaffoldKey; // Add this line
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
   const DrawerContentForm(
-      {super.key, this.emailUser, this.anonUser, required this.scaffoldKey});
+      {Key? key, this.emailUser, this.anonUser, required this.scaffoldKey})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,45 +18,50 @@ class DrawerContentForm extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          AccountDrawerHeader(
+          Container(
+            height: 200, // Set a fixed height for the header
+            child: AccountDrawerHeader(
               emailUser: emailUser,
-              anonUser: anonUser), // Include AccountDrawerHeader here
-          ListTile(
-            title: const Text('Sports'),
-            onTap: () {
-              // Navigate to the sports news screen or perform the desired action
-              Navigator.pop(context); // Close the drawer
-            },
+              anonUser: anonUser,
+            ),
           ),
-          ListTile(
-            title: const Text('Entertainment'),
-            onTap: () {
-              // Navigate to the entertainment news screen or perform the desired action
-              Navigator.pop(context); // Close the drawer
-            },
+          Expanded(
+            child: Column(
+              children: [
+                ListTile(
+                  title: const Text('Sports'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Entertainment'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Business'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Politics'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Foreign'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                // Add more list items for other news sections if needed
+              ],
+            ),
           ),
-          ListTile(
-            title: const Text('Business'),
-            onTap: () {
-              // Navigate to the business news screen or perform the desired action
-              Navigator.pop(context); // Close the drawer
-            },
-          ),
-          ListTile(
-            title: const Text('Politics'),
-            onTap: () {
-              // Navigate to the politics news screen or perform the desired action
-              Navigator.pop(context); // Close the drawer
-            },
-          ),
-          ListTile(
-            title: const Text('Foreign'),
-            onTap: () {
-              // Navigate to the foreign news screen or perform the desired action
-              Navigator.pop(context); // Close the drawer
-            },
-          ),
-          // Add more list items for other news sections if needed
         ],
       ),
     );

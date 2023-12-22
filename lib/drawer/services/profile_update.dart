@@ -3,32 +3,46 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 
 class ProfileUpdateService {
-  static Future<void> updateProfileImage(File imageFile) async {
-    User? user = FirebaseAuth.instance.currentUser;
+  static Future<void> updateProfileImage(
+      BuildContext context, User user, File imageFile) async {
+    try {
+      print('Uploading image to Firebase Storage...');
 
-    if (user != null) {
-      try {
-        // Upload image to Firebase Storage
-        await FirebaseStorage.instance
-            .ref('profile_images/${user.uid}.jpg')
-            .putFile(imageFile);
+      // Upload image to Firebase Storage
+      UploadTask task = FirebaseStorage.instance
+          .ref('profile_images/${user.uid}.jpg')
+          .putFile(imageFile);
 
-        // Get the download URL of the uploaded image
-        String downloadURL = await FirebaseStorage.instance
-            .ref('profile_images/${user.uid}.jpg')
-            .getDownloadURL();
+      task.snapshotEvents.listen((TaskSnapshot snapshot) {
+        print(
+            'Upload progress: ${snapshot.bytesTransferred}/${snapshot.totalBytes}');
+      });
 
-        // Update the profile image URL in the Firestore database
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update({'profileImageURL': downloadURL});
-      } catch (e) {
-        print('Error updating profile image: $e');
-        rethrow; // Rethrow the error to handle it in the calling code
-      }
+      await task;
+
+      print('Image uploaded successfully.');
+
+      // Get the download URL of the uploaded image
+      String downloadURL = await FirebaseStorage.instance
+          .ref('profile_images/${user.uid}.jpg')
+          .getDownloadURL();
+
+      print('Download URL: $downloadURL');
+
+      // Update the profile image URL in the Firestore database
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({'profileImageURL': downloadURL});
+
+      print('Profile image URL updated in Firestore.');
+    } catch (e, stackTrace) {
+      print('Error updating profile image: $e');
+      print(stackTrace);
+      rethrow; // Rethrow the error to handle it in the calling code
     }
   }
 
@@ -43,16 +57,18 @@ class ProfileUpdateService {
       Map<String, dynamic> updatedFields = {};
       if (username != null) updatedFields['username'] = username;
       if (email != null) updatedFields['email'] = email;
-      if (profileImageURL != null)
+      if (profileImageURL != null) {
         updatedFields['profileImageURL'] = profileImageURL;
+      }
 
       // Update the user's profile in Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .update(updatedFields);
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Error updating profile: $e');
+      print(stackTrace);
       rethrow; // Rethrow the error to handle it in the calling code
     }
   }
